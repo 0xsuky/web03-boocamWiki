@@ -1,16 +1,22 @@
-import loaders, {dbLoader} from './loaders';
+import loaders, { dbLoader } from './loaders';
 import * as express from 'express';
-import config from './config'
+import config from './config';
 
-async function startServer() {
-  const app = express();
+export const app = express();
 
+export async function startServer() {
   await loaders({ expressApp: app });
   await dbLoader({});
-
-  app.listen(config.PORT, () => {
-    console.log(`✅ Your server is ready !`);
-  });
 }
 
-startServer();
+function listenServer() {
+  app.listen(config.PORT, () => {
+    console.log(`✅ Your server is ready !`);
+  });  
+}
+
+if (process.env.NODE_ENV !== 'test'){
+  startServer().then(()=>{
+    listenServer();
+  })
+}
